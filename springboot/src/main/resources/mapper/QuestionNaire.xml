@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bs.springboot.mapper.QuestionNaireMapper">
+    <insert id="add" parameterType="QuestionNaire">
+        insert into questionNaire (title, info, uid, authority, itemType, itemInfo)
+        values (#{title}, #{info}, #{uid}, #{authority}, #{itemType}, #{itemInfo})
+    </insert>
+
+    <delete id="delete" parameterType="QuestionNaire">
+        delete
+        from questionNaire
+        where qid = #{qid}
+    </delete>
+
+    <select id="get" parameterType="_int" resultType="QuestionNaire">
+        select *
+        from questionNaire
+        where qid = #{qid}
+    </select>
+
+    <update id="update" parameterType="QuestionNaire">
+        update questionNaire
+        set title=#{title},
+            info = #{info},
+            uid=#{uid},
+            authority = #{authority},
+            itemType = #{itemType},
+            itemInfo = #{itemInfo}
+        where qid = #{qid}
+    </update>
+    <select id="list" resultType="QuestionNaire">
+        select *
+        from questionNaire
+    </select>
+</mapper>

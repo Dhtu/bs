@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bs.springboot.mapper.TableDataMapper">
+    <insert id="add" parameterType="TableData">
+        insert into tabledata (qid, uid, value)
+        values (#{qid}, #{uid}, #{value})
+    </insert>
+
+    <delete id="delete" parameterType="TableData">
+        delete
+        from tabledata
+        where did = #{did}
+    </delete>
+
+    <select id="get" parameterType="_int" resultType="TableData">
+        select *
+        from tabledata
+        where did = #{did}
+    </select>
+
+    <update id="update" parameterType="TableData">
+        update tabledata
+        set qid=#{qid},
+            uid = #{uid},
+            value=#{value}
+        where did = #{did}
+    </update>
+    <select id="list" resultType="TableData">
+        select *
+        from tabledata
+    </select>
+</mapper>
