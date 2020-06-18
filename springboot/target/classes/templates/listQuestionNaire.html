@@ -54,7 +54,7 @@
         <tr>
             <td>title</td>
             <td>info</td>
-            <td>uid</td>
+<!--            <td>uid</td>-->
             <td>authority</td>
             <td>itemType</td>
             <td>itemInfo</td>
@@ -64,7 +64,7 @@
         <tr v-for="questionNaire in QuestionNaires ">
             <td>{{questionNaire.title}}</td>
             <td>{{questionNaire.info}}</td>
-            <td>{{questionNaire.uid}}</td>
+<!--            <td>{{questionNaire.uid}}</td>-->
             <td>{{questionNaire.authority}}</td>
             <td>{{questionNaire.itemType}}</td>
             <td>{{questionNaire.itemInfo}}</td>
@@ -89,10 +89,10 @@
                     <input type="text" class="form-control" placeholder="info" aria-describedby="basic-addon1"
                            v-model="questionNaires4add.info"/>
                 </div>
-                <div class="input-group input-group">
-                    <input type="number" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
-                           v-model="questionNaires4add.uid"/>
-                </div>
+<!--                <div class="input-group input-group">-->
+<!--                    <input type="number" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"-->
+<!--                           v-model="questionNaires4add.uid"/>-->
+<!--                </div>-->
                 <div class="input-group input-group">
                     <input type="number" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
                            v-model="questionNaires4add.authority"/>

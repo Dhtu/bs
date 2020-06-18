@@ -2,7 +2,7 @@ package com.bs.springboot.service.serviceHelper;
 
 import javax.servlet.http.HttpSession;
 
-public class sessionHelper {
+public class SessionHelper {
     public static int GetUid(HttpSession session){
         Object uid = session.getAttribute("uid");
         if (uid == null) {

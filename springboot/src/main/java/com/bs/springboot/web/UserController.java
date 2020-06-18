@@ -2,7 +2,7 @@ package com.bs.springboot.web;
 
 import com.bs.springboot.pojo.User;
 import com.bs.springboot.service.UserService;
-import com.bs.springboot.service.serviceHelper.sessionHelper;
+import com.bs.springboot.service.serviceHelper.SessionHelper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
@@ -62,7 +62,7 @@ public class UserController {
         System.out.println(user);
         int state = userService.login(user);
         if (state == 2) {
-            int uid = sessionHelper.GetUid(session);
+            int uid = SessionHelper.GetUid(session);
             if (uid == -1 || uid != user.getUid()) {
                 System.out.println("不存在session，设置uid=" + user.getUid());
                 session.setAttribute("uid", user.getUid());

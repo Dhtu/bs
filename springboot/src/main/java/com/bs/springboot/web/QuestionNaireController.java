@@ -2,30 +2,43 @@ package com.bs.springboot.web;
 
 import com.bs.springboot.pojo.QuestionNaire;
 import com.bs.springboot.service.QuestionNaireService;
+import com.bs.springboot.service.serviceHelper.SessionHelper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
+
 @RestController
 public class QuestionNaireController {
-    @Autowired
+    final
     QuestionNaireService questionNaireService;
+
+    public QuestionNaireController(QuestionNaireService questionNaireService) {
+        this.questionNaireService = questionNaireService;
+    }
 
     /*restful 部分*/
     @GetMapping("/QuestionNaires")
-    public PageInfo<QuestionNaire> list(@RequestParam(value = "start", defaultValue = "1") int start, @RequestParam(value = "size", defaultValue = "20") int size) throws Exception {
-        PageHelper.startPage(start, size);
-        List<QuestionNaire> hs = questionNaireService.list();
-        System.out.println(hs.size());
+    public PageInfo<QuestionNaire> list(@RequestParam(value = "start", defaultValue = "1") int start,
+                                        @RequestParam(value = "size", defaultValue = "20") int size,
+                                        HttpSession session) {
+        int uid = SessionHelper.GetUid(session);
+        List<QuestionNaire> hs = null;
+        if (uid >= 0) {
+            PageHelper.startPage(start, size);
+            hs = questionNaireService.SelectedList(uid);
+            System.out.println(hs.size());
+        }
+
 
         return new PageInfo<>(hs, 20);
     }
 
     @GetMapping("/QuestionNaires/{qid}")
-    public QuestionNaire get(@PathVariable("qid") int qid) throws Exception {
+    public QuestionNaire get(@PathVariable("qid") int qid) {
         System.out.println(qid);
         QuestionNaire h = questionNaireService.get(qid);
         System.out.println(h);
@@ -33,19 +46,21 @@ public class QuestionNaireController {
     }
 
     @PostMapping("/QuestionNaires")
-    public String add(@RequestBody QuestionNaire h) throws Exception {
+    public String add(@RequestBody QuestionNaire h, HttpSession session) {
+        int uid = SessionHelper.GetUid(session);
+        h.setUid(uid);
         questionNaireService.add(h);
         return "success";
     }
 
     @DeleteMapping("/QuestionNaires/{qid}")
-    public String delete(QuestionNaire h) throws Exception {
+    public String delete(QuestionNaire h) {
         questionNaireService.delete(h.getQid());
         return "success";
     }
 
     @PutMapping("/QuestionNaires/{qid}")
-    public String update(@RequestBody QuestionNaire h) throws Exception {
+    public String update(@RequestBody QuestionNaire h) {
         questionNaireService.update(h);
         return "success";
     }

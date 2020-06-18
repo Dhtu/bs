@@ -40,4 +40,9 @@ public class QuestionNaireImpl implements QuestionNaireService {
     public List<QuestionNaire> list() {
         return questionNaireMapper.list();
     }
+
+    @Override
+    public List<QuestionNaire> SelectedList(int uid) {
+        return questionNaireMapper.SelectedList(uid);
+    }
 }

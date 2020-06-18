@@ -35,4 +35,10 @@
         select *
         from questionNaire
     </select>
+
+    <select id="SelectedList" parameterType="_int" resultType="QuestionNaire">
+        select *
+        from questionNaire
+        where uid = #{uid}
+    </select>
 </mapper>
