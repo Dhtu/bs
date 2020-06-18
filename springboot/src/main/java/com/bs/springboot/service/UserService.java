@@ -5,15 +5,17 @@ import java.util.List;
 import com.bs.springboot.pojo.User;
 
 public interface UserService {
-    public int add(User user);
+    int add(User user);
 
-    public void delete(int uid);
+    void delete(int uid);
 
-    public User get(int uid);
+    User get(int uid);
 
-    public int update(User user);
+    int update(User user);
 
-    public List<User> list();
+    List<User> list();
 
-    public int login(User user);
+    int login(User user);
+
+
 }

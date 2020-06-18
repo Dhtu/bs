@@ -2,11 +2,13 @@ package com.bs.springboot.web;
 
 import com.bs.springboot.pojo.User;
 import com.bs.springboot.service.UserService;
+import com.bs.springboot.service.serviceHelper.sessionHelper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
@@ -56,9 +58,20 @@ public class UserController {
 
     @ResponseBody
     @RequestMapping(value = "/selectUserName", method = RequestMethod.POST)
-    public int selectUserName(@RequestBody User user) {
+    public int selectUserName(@RequestBody User user, HttpSession session) {
         System.out.println(user);
-        return userService.login(user);
+        int state = userService.login(user);
+        if (state == 2) {
+            int uid = sessionHelper.GetUid(session);
+            if (uid == -1 || uid != user.getUid()) {
+                System.out.println("不存在session，设置uid=" + user.getUid());
+                session.setAttribute("uid", user.getUid());
+            } else {
+                System.out.println("存在session，uid=" + uid);
+            }
+        }
+
+        return state;
     }
 
     /*页面跳转 部分*/
