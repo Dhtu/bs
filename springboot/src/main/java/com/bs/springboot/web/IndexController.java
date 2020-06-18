@@ -10,6 +10,11 @@ public class IndexController {
         return new ModelAndView("index");
     }
 
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public ModelAndView login() {
+        return new ModelAndView("login");
+    }
+
     @GetMapping("/autoSchedule")
     public void autoSchedule() throws Exception {
         System.out.println("start auto schedule");

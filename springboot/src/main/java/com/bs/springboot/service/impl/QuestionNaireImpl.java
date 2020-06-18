@@ -3,15 +3,18 @@ package com.bs.springboot.service.impl;
 import com.bs.springboot.mapper.QuestionNaireMapper;
 import com.bs.springboot.pojo.QuestionNaire;
 import com.bs.springboot.service.QuestionNaireService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class QuestionNaireImpl implements QuestionNaireService {
-    @Autowired
+    final
     QuestionNaireMapper questionNaireMapper;
+
+    public QuestionNaireImpl(QuestionNaireMapper questionNaireMapper) {
+        this.questionNaireMapper = questionNaireMapper;
+    }
 
     @Override
     public int add(QuestionNaire questionNaire) {

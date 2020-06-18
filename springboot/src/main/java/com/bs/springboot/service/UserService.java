@@ -14,4 +14,6 @@ public interface UserService {
     public int update(User user);
 
     public List<User> list();
+
+    public int login(User user);
 }

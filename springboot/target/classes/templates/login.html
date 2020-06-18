@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>用户登录</title>
+
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/vue.min.js"></script>
+    <script src="./js/axios.min.js"></script>
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <script src="./js/bootstrap.min.js"></script>
+    <style type="text/css">
+        body {
+            display:flex;
+            height: 969px;
+            align-items: center;
+            padding:40px 0;
+            background-color: #f5f5f5;
+        }
+        form {
+            display: block;
+            width: 100%;
+            max-width: 330px;
+            padding:15px;
+            margin: auto;
+        }
+        .btn-block {
+            width:300px;
+            margin:10px auto;
+        }
+        .form-control {
+            width:300px;
+            height: 50px;
+            font-size: 20px;
+            /*margin:0 auto -20px;*/
+            background-color: #fff;
+        }
+
+
+    </style>
+</head>
+<body class=text-center>
+<!-- 点击登录之后，提交表单，验证该用户输入的账号密码是否正确 -->
+<form id = "app" >
+<!--    <img src="/img/P.png" width="72" height="72">-->
+    <h2 class="=form-signin0-heading">Please sign in</h2>
+    <label>
+        <input class="form-control" v-model="user4Login.uid" type="number" placeholder="用户ID" >
+    </label><br>
+    <label>
+        <input class="form-control" v-model="user4Login.password" type="password" placeholder="密码">
+    </label><br>
+    <button class="btn btn-lg btn-primary btn-block" type="button" @click="login" >Sign in</button>
+</form>
+<script>
+    new Vue({
+        el:'#app',
+        data:{
+            user4Login: { uid: 0, uname: '', password: '',email: ''}
+        },
+        methods:{
+            login:function () {
+                axios.post('/selectUserName', this.user4Login).then(function (dat) {
+                    console.log(dat.data)
+                    if (dat.data === 0)
+                        console.log("用户不存在")
+                    else if (dat.data === 1)
+                        console.log("登录失败，账号或密码错误")
+                    else if (dat.data === 2)
+                        console.log("登录成功")
+                }).catch(function () {
+                    console.log("传输失败")
+                })
+            },
+        }
+    })
+</script>
+
+</body>
+</html>
