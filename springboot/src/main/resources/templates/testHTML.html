@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./js/vue.min.js"></script>
+
+</head>
+<body>
+<div id="app">
+    <div v-for="(item, index) in questions" :key="index">
+        <radio-select :name="item.name"
+                      @pick="handlePick"
+                      :title="item.title" :choices="item.choices"
+                      v-show="page==index"
+                      v-if="item.type=='radio'
+            ">
+        </radio-select>
+        <multi-select @pick="handlePick"
+                      :title="item.title"
+                      :choices="item.choices"
+                      v-show="page==index"
+                      v-if="item.type=='multi'"></multi-select>
+        <typetext @pick="handlePick"
+                  :title="item.title"
+                  v-show="page==index"
+                  v-if="item.type=='typetext'"></typetext>
+    </div>
+    <mybtn v-show="page == count-1" :banned="isBanned" @click="handleSubmit">提交</mybtn>
+    <mybtn v-show="page < count-1" :banned="isBanned" @click="handleNext">下一步</mybtn>
+    <mybtn @click="handleReset" :banned="false">重置</mybtn>
+
+
+</div>
+
+
+<script>
+
+    Vue.component("mybtn",{
+        props:{
+            banned:{
+                type:Boolean,
+                default:true
+            }
+        },
+        template:`
+        <button @click="handeClick" :disabled="banned">
+            <slot></slot>
+        </button>
+    `
+        ,
+        methods:{
+            handeClick:function(){
+                this.$emit("click")
+            }
+        }
+    })
+
+    Vue.component("radioSelect",{
+        //组件里的属性
+        props:{
+            //限制只能为String,默认值为gender
+            name:{
+                type:String,
+                default:"gender"
+            },
+            //限制只能为String,默认值为"这是一个单选"
+            title:{
+                type:String,
+                default:"这是一个单选"
+            },
+            //限制只能为数组,默认值为["这道题是空的"]
+            choices:{
+                type:Array,
+                default:function(){
+                    return["这道题是空的"];
+                }
+            },
+
+        },
+        data:function(){
+            let _this=this;
+            let values =[];
+            //将value追加, 循环拿到name为,给每个组件的name和下标组合起来,这样就不会出现相同的name了
+            this.choices.forEach((item,index) => {
+                values.push(_this.name+(index+''));
+            });
+            return{
+                //将上面的values付给外面的values
+                values:values,
+                culValue:""
+            }
+        },
+        template:`
+    <div>
+        <p>{{title}}</p>
+        <ul>
+            <li v-for="(item,index) in choices">
+                <input v-model="culValue" :value="item" type="radio" :id="values[index]" :name="name" >
+                <label :for="values[index]">{{item}}</label>
+            </li>
+        </ul>
+    </div>
+    `,
+        watch:{
+            culValue:function(val){
+                this.$emit("pick",val)
+            }
+        },
+    })
+
+    Vue.component("multiSelect",{
+        props:{
+            name:{
+                type:String,
+                default:"cks"
+            },
+            title:{
+                type:String,
+                default:"这是一个多选"
+            },
+            choices:{
+                type:Array,
+                default:function(){
+                    return["这道题是空的"];
+                }
+            }
+
+        },
+        data:function(){
+            let _this=this;
+            let values =[];
+            this.choices.forEach((item,index) => {
+                values.push(_this.name+(index+''));
+            });
+            return{
+                values:values,
+                culValue:[]
+            }
+        },
+        template:`
+    <div>
+        <p>{{title}}</p>
+        <ul>
+            <li v-for="(item,index) in choices">
+                <input v-model="culValue" :value="item" type="checkbox" :id="values[index]" :name="name" >
+                <label :for="values[index]">{{item}}</label>
+            </li>
+        </ul>
+    </div>
+    `,
+        watch:{
+            culValue:function(val){
+                this.$emit("pick",val)
+            }
+        },
+    })
+
+    Vue.component("typetext",{
+        props:{
+            name:{
+                type:String,
+                default:"text"
+            },
+            title:{
+                type:String,
+                default:"这是一个文本"
+            },
+        },
+        data:function(){
+            return {
+                text:""
+            }
+        },
+        watch:{
+            text:function(val){
+                this.$emit("pick",val)
+            }
+        }
+        ,
+        template:`
+    <div>
+        <p>{{title}}</p>
+        <div>
+            <textarea v-model="text"  cols="30" rows="10"></textarea>
+        </div>
+    </div>
+    `
+    })
+
+    const app=new Vue({
+        el:"#app",
+        data:{
+            isBanned:true,
+            page:0,
+            questions:[
+                {
+                    name:'gender',
+                    type:'radio',
+                    title:'你的性别?',
+                    choices:["男","女","保密"]
+                },
+                {
+
+                    type:"multi",
+                    title:'你的爱好',
+                    choices:["唱歌","跳舞","rap","篮球"],
+                    picked:[]
+                },
+                {
+                    type:'typetext',
+                    title:'自我介绍',
+                    text:""
+                }
+
+            ]
+        },
+        computed:{
+            count: function(){
+                //获取问题的数量,等同于页数
+                return this.questions.length;
+            }
+        },
+        methods: {
+            handlePick:function(val){
+                //通过页数拿到问题
+                let question=this.questions[this.page];
+                switch(question.type){
+                    case "radio":
+                        if(val){
+                            //不禁用按钮
+                            this.isBanned=false;
+
+                            this.questions[this.page].picked=val;
+                            return;
+                        }
+                        break;
+                    case "multi":
+                        if(val.length>=3){
+                            this.isBanned=false;
+                            question.pickeds=val;
+                            return;
+                        }
+                        break;
+                    case "typetext":
+                        if(val.length>=10){
+                            this.isBanned=false;
+                            question.text=val;
+                            return;
+                        }
+                        break;
+                }
+                this.isBanned=true;
+            },
+            isDisable:function(){
+                let question=this.questions[this.page];
+                switch(question.type){
+                    case"radio":
+                        this.isBanned=question.picked?false:true;
+                        break;
+                    case "multi":
+                        this.isBanned=question.picked.length>=3?false:true;
+                        break;
+                    case "typetext":
+                        this.isBanned=question.text.length>=10?false:true;
+                        break;
+                }
+            },
+            handleNext:function(){
+                this.page+=1;
+                this.isDisable();
+            },
+            handlePrev:function(){
+                this.page-=1;
+                this.isDisable();
+            },
+            handleReset:function(){
+                this.$children[this.page].culValue="";
+                this.isBanned=true;
+            },
+            handleSubmit:function(){
+                let str="";
+                this.questions.forEach((item,index) => {
+                    switch(index){
+                        case 0:
+                            str+=item.picked+"  ";
+                            break;
+                        case 1:
+                            str+=item.pickeds+"  ";
+                            break;
+                        case 2:
+                            str+=item.text+"  ";
+                            break;
+                    }
+                });
+                alert(str)
+            }
+
+        },
+
+    })
+
+</script>
+
+</body>
+</html>

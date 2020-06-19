@@ -15,9 +15,8 @@ public class IndexController {
         return new ModelAndView("login");
     }
 
-    @GetMapping("/autoSchedule")
-    public void autoSchedule() throws Exception {
-        System.out.println("start auto schedule");
-//        return new PageInfo<>(hs, 20);
+    @RequestMapping(value = "/testHTML", method = RequestMethod.GET)
+    public ModelAndView testHTML() {
+        return new ModelAndView("testHTML");
     }
 }

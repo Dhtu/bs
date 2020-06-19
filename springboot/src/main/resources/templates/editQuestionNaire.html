@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<html xmlns:v-on="http://www.w3.org/1999/xhtml" lang="cn">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <script src="./js/jquery.min.js"></script>
@@ -8,12 +8,13 @@
     <link href="./css/bootstrap.min.css" rel="stylesheet">
     <script src="./js/bootstrap.min.js"></script>
     <style type="text/css">
-        div#app{
-            margin:20px auto;
-            width:400px;
-            padding:20px;
+        div#app {
+            margin: 20px auto;
+            width: 400px;
+            padding: 20px;
         }
     </style>
+    <title>编辑问卷</title>
 </head>
 
 <body>
@@ -21,30 +22,42 @@
     <div id="div4Update">
 
         <div class="input-group input-group">
-            <input type="text" class="form-control" placeholder="title" aria-describedby="basic-addon1"
-                   v-model="questionNaires4add.title"/>
+            <label>
+                <input type="text" class="form-control" placeholder="title" aria-describedby="basic-addon1"
+                       v-model="questionNaires4add.title"/>
+            </label>
         </div>
         <div class="input-group">
-            <input type="text" class="form-control" placeholder="info" aria-describedby="basic-addon1"
-                   v-model="questionNaires4add.info"/>
+            <label>
+                <input type="text" class="form-control" placeholder="info" aria-describedby="basic-addon1"
+                       v-model="questionNaires4add.info"/>
+            </label>
         </div>
         <div class="input-group input-group">
-            <input type="number" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
-                   v-model="questionNaires4add.uid"/>
+            <label>
+                <input type="number" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
+                       v-model="questionNaires4add.uid"/>
+            </label>
         </div>
         <div class="input-group input-group">
-            <input type="number" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
-                   v-model="questionNaires4add.authority"/>
+            <label>
+                <input type="number" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
+                       v-model="questionNaires4add.authority"/>
+            </label>
         </div>
         <div class="input-group input-group">
-            <input type="number" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
-                   v-model="questionNaires4add.itemType"/>
+            <label>
+                <input type="number" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
+                       v-model="questionNaires4add.itemType"/>
+            </label>
         </div>
         <div class="input-group input-group">
-            <input type="text" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
-                   v-model="questionNaires4add.itemInfo"/>
+            <label>
+                <input type="text" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
+                       v-model="questionNaires4add.itemInfo"/>
+            </label>
         </div>
-        <input type="hidden"    v-model="questionNaires4add.qid" />
+        <input type="hidden" v-model="questionNaires4add.qid"/>
         <br>
         <button type="button" class="btn btn-info" v-on:click="update">修改</button>
         <button type="button" class="btn btn-danger" v-on:click="cancel">取消</button>
@@ -54,43 +67,43 @@
 
 <script type="text/javascript">
     //获取地址栏参数的函数
-    function getUrlParms(name){
-        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
-        var r = window.location.search.substr(1).match(reg);
-        if(r!=null)
+    function getUrlParms(name) {
+        let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        let r = window.location.search.substr(1).match(reg);
+        if (r != null)
             return unescape(r[2]);
         return null;
     }
 
-    var data4Vue = {
+    let data4Vue = {
         questionNaires: [],
         questionNaires4add: {qid: 0, title: '', info: '', uid: 0, authority: 0, itemType: 0, itemInfo: ''},
     };
 
     //ViewModel
-    var vue = new Vue({
+    let vue = new Vue({
         el: '#app',
         data: data4Vue,
-        mounted:function(){ //mounted　表示这个 Vue 对象加载成功了
+        mounted: function () { //mounted　表示这个 Vue 对象加载成功了
             this.get();
         },
         methods: {
-            get:function(){
-                var qid = getUrlParms("qid");
-                var url = "QuestionNaires/"+qid;
+            get: function () {
+                let qid = getUrlParms("qid");
+                let url = "QuestionNaires/" + qid;
                 console.log(url);
-                axios.get(url).then(function(response) {
+                axios.get(url).then(function (response) {
                     vue.questionNaires4add = response.data;
                 })
             },
-            update:function (event) {
-                var url = "QuestionNaires/"+vue.questionNaires4add.qid;
-                axios.put(url,vue.questionNaires4add).then(function(response){
-                    location.href="listQuestionNaire";
+            update: function () {
+                let url = "QuestionNaires/" + vue.questionNaires4add.qid;
+                axios.put(url, vue.questionNaires4add).then(function () {
+                    location.href = "listQuestionNaire";
                 });
             },
-            cancel:function(){
-                location.href="listQuestionNaire";
+            cancel: function () {
+                location.href = "listQuestionNaire";
             }
         }
     });

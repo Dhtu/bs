@@ -13,7 +13,7 @@ itemInfo varchar(1024),
 primary key (qid)
 )engine=InnoDB Default charset = utf8mb4;
 
-DROP PROCEDURE IF EXISTS pro_initData;--如果存在此存储过程则删掉
+DROP PROCEDURE IF EXISTS pro_initData;/*如果存在此存储过程则删掉*/
 DELIMITER $
 CREATE PROCEDURE pro_initData()
 BEGIN
@@ -22,7 +22,7 @@ BEGIN
         INSERT INTO questionNaire 
         (title,info,uid,authority,itemType,itemInfo) 
         VALUES
-        (concat('title',i),'info',i,i%3,i%7,'item_info');
+        (concat('title',i),'info',3,i%3,i%7,'item_info');
         SET i = i+1;
     END WHILE;
 END $
