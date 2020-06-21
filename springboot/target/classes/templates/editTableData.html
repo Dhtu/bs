@@ -35,6 +35,7 @@
                       v-if="item.type==='multi'"></multi-select>
         <typetext @pick="handlePick"
                   :title="item.title"
+                  :index="index"
                   v-show="item.isShow"
                   v-if="item.type==='typetext'"></typetext>
         <type-number @pick="handlePick"
@@ -79,20 +80,7 @@
 </div>
 
 <script type="text/javascript">
-    //获取地址栏参数的函数
-    function getUrlParms(name) {
-        let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-        let r = window.location.search.substr(1).match(reg);
-        if (r != null)
-            return unescape(r[2]);
-        return null;
-    }
 
-    let data4Vue = {
-        tableDatas: [],
-        tableDatas4add: {did: 0, qid: 0, uid: 0, value: ''},
-        questions: {}
-    };
 
     Vue.component("radioSelect", {
         //组件里的属性
@@ -265,15 +253,24 @@
                 type: String,
                 default: "这是一个文本"
             },
+            index: {
+                type: Number,
+                default: 0
+            }
         },
         data: function () {
+            let _this = this
             return {
+                index: _this.index,
                 text: ""
             }
         },
         watch: {
             text: function (val) {
-                this.$emit("pick", val)
+                let ret = {}
+                ret.val = val
+                ret.index = this.$data.index
+                this.$emit("pick", ret)
             }
         }
         ,
@@ -320,7 +317,21 @@
         `
     })
 
+    //获取地址栏参数的函数
+    function getUrlParms(name) {
+        let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        let r = window.location.search.substr(1).match(reg);
+        if (r != null)
+            return unescape(r[2]);
+        return null;
+    }
 
+    let data4Vue = {
+        tableDatas: [],
+        tableDatas4add: {did: 0, qid: 0, uid: 0, value: ''},
+        questions: {},
+        answers: {}
+    };
     //ViewModel
     let vue = new Vue({
         el: '#app',
@@ -356,28 +367,29 @@
                 location.href = "listTableData";
             },
             handlePick: function (val) {
-                //通过页数拿到问题
-                // let question = this.questions[this.page];
-                // switch (question.type) {
-                //     case "radio":
-                //         if (val) {
-                //             this.questions[this.page].picked = val;
-                //             return;
-                //         }
-                //         break;
-                //     case "multi":
-                //         if (val.length >= 3) {
-                //             question.pickeds = val;
-                //             return;
-                //         }
-                //         break;
-                //     case "typetext":
-                //         if (val.length >= 10) {
-                //             question.text = val;
-                //             return;
-                //         }
-                //         break;
-                // }
+                let question = this.questions[val.index];
+                switch (question.type) {
+                    case "radio":
+                        if (val) {
+                            this.questions[this.page].picked = val;
+                            return;
+                        }
+                        break;
+                    case "multi":
+                        if (val.length >= 3) {
+                            question.pickeds = val;
+                            return;
+                        }
+                        break;
+                    case "typetext":
+                        console.log(val.index)
+                        console.log(val.val)
+                        val.question = question
+                        vue.answers[val.index] = val
+                        break;
+                }
+
+                vue.tableDatas4add.value = JSON.stringify(vue.answers)
             }
         }
     });

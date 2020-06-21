@@ -2,21 +2,27 @@ package com.bs.springboot.web;
 
 import com.bs.springboot.pojo.TableData;
 import com.bs.springboot.service.TableDataService;
+import com.bs.springboot.service.serviceHelper.SessionHelper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
+
 @RestController
 public class TableDataController {
-    @Autowired
+    final
     TableDataService tableDataService;
+
+    public TableDataController(TableDataService tableDataService) {
+        this.tableDataService = tableDataService;
+    }
 
     /*restful 部分*/
     @GetMapping("/TableDatas")
-    public PageInfo<TableData> list(@RequestParam(value = "start", defaultValue = "1") int start, @RequestParam(value = "size", defaultValue = "20") int size) throws Exception {
+    public PageInfo<TableData> list(@RequestParam(value = "start", defaultValue = "1") int start, @RequestParam(value = "size", defaultValue = "20") int size) {
         PageHelper.startPage(start, size);
         List<TableData> hs = tableDataService.list();
         System.out.println(hs.size());
@@ -25,7 +31,7 @@ public class TableDataController {
     }
 
     @GetMapping("/TableDatas/{did}")
-    public TableData get(@PathVariable("did") int did) throws Exception {
+    public TableData get(@PathVariable("did") int did) {
         System.out.println(did);
         TableData h = tableDataService.get(did);
         System.out.println(h);
@@ -33,19 +39,22 @@ public class TableDataController {
     }
 
     @PostMapping("/TableDatas")
-    public String add(@RequestBody TableData h) throws Exception {
+    public String add(@RequestBody TableData h,
+                      HttpSession session) {
+        int uid = SessionHelper.GetUid(session);
+        h.setUid(uid);
         tableDataService.add(h);
         return "success";
     }
 
     @DeleteMapping("/TableDatas/{did}")
-    public String delete(TableData h) throws Exception {
+    public String delete(TableData h) {
         tableDataService.delete(h.getDid());
         return "success";
     }
 
     @PutMapping("/TableDatas/{did}")
-    public String update(@RequestBody TableData h) throws Exception {
+    public String update(@RequestBody TableData h) {
         tableDataService.update(h);
         return "success";
     }

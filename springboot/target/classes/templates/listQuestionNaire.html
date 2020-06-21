@@ -86,10 +86,10 @@
                     <input type="text" class="form-control" placeholder="info" aria-describedby="basic-addon1"
                            v-model="questionNaires4add.info"/>
                 </div>
-<!--                <div class="input-group input-group">-->
-<!--                    <input type="number" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"-->
-<!--                           v-model="questionNaires4add.uid"/>-->
-<!--                </div>-->
+                <!--                <div class="input-group input-group">-->
+                <!--                    <input type="number" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"-->
+                <!--                           v-model="questionNaires4add.uid"/>-->
+                <!--                </div>-->
                 <div class="input-group input-group">
                     <input type="number" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
                            v-model="questionNaires4add.authority"/>
@@ -166,7 +166,15 @@
 
                 axios.post(url, this.questionNaires4add).then(function (response) {
                     vue.list(1);
-                    vue.questionNaires4add = {qid: 0, title: '', info: '', uid: 0, authority: 0, itemType: 0, itemInfo: ''}
+                    vue.questionNaires4add = {
+                        qid: 0,
+                        title: '',
+                        info: '',
+                        uid: 0,
+                        authority: 0,
+                        itemType: 0,
+                        itemInfo: ''
+                    }
                 });
             },
             deleteQuestionNaire: function (id) {
