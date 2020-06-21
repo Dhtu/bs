@@ -13,25 +13,52 @@
 
 </head>
 <body>
-<div id="app">
-    <div v-for="(item, index) in questions" :key="index">
-        <radio-select :name="item.name"
-                      @pick="handlePick"
-                      :title="item.title" :choices="item.choices"
-                      v-if="item.type==='radio'
+<div id="app" >
+    <!--    <div class="container">-->
+    <!--        <div class="row">-->
+    <!--            <div class="col-lg-3"></div>-->
+    <!--            <div class="col-xs-6">-->
+
+    <ul class="list-group">
+        <li class="list-group-item"></li>
+        <li class="list-group-item">
+            <div v-for="(item, index) in questions" :key="index">
+                <radio-select :name="item.name"
+                              @pick="handlePick"
+                              :title="item.title" :choices="item.choices"
+                              v-show="item.isShow"
+                              v-if="item.type==='radio'
             ">
-        </radio-select>
-        <multi-select @pick="handlePick"
-                      :title="item.title"
-                      :choices="item.choices"
-                      v-if="item.type==='multi'"></multi-select>
-        <typetext @pick="handlePick"
-                  :title="item.title"
-                  v-if="item.type==='typetext'"></typetext>
-        <type-number @pick="handlePick"
-                     :title="item.title"
-                     v-if="item.type==='typeNumber'"></type-number>
-    </div>
+                </radio-select>
+                <multi-select @pick="handlePick"
+                              :title="item.title"
+                              :choices="item.choices"
+                              v-show="item.isShow"
+                              v-if="item.type==='multi'"></multi-select>
+                <typetext @pick="handlePick"
+                          :title="item.title"
+                          v-show="item.isShow"
+                          v-if="item.type==='typetext'"></typetext>
+                <type-number @pick="handlePick"
+                             :title="item.title"
+                             v-show="item.isShow"
+                             v-if="item.type==='typeNumber'"></type-number>
+                <score @pick="handlePick"
+                       :title="item.title"
+                       :choices="item.choices"
+                       v-show="item.isShow"
+                       v-if="item.type==='score'"></score>
+            </div>
+        </li>
+        <li class="list-group-item"></li>
+    </ul>
+
+    <!--            </div>-->
+    <!--            <div class="col-lg-3"></div>-->
+    <!--        </div>-->
+    <!--        <div class="row"></div>-->
+    <!--    </div>-->
+
 </div>
 
 
@@ -63,7 +90,7 @@
             let values = [];
             //将value追加, 循环拿到name为,给每个组件的name和下标组合起来,这样就不会出现相同的name了
             this.choices.forEach((item, index) => {
-                values.push(_this.name + (index + ''));
+                values.push(_this.name + (index + ""));
             });
             return {
                 //将上面的values付给外面的values
@@ -81,6 +108,63 @@
                             <label :for="values[index]">{{item}}</label>
                         </li>
                     </ul>
+                </div>
+            </div>
+        `,
+        watch: {
+            culValue: function (val) {
+                this.$emit("pick", val)
+            }
+        },
+    })
+
+    Vue.component("score", {
+        //组件里的属性
+        props: {
+            //限制只能为String,默认值为gender
+            name: {
+                type: String,
+                default: "gender"
+            },
+            //限制只能为String,默认值为"这是一个单选"
+            title: {
+                type: String,
+                default: "这是一个单选"
+            },
+            //限制只能为数组,默认值为["这道题是空的"]
+            choices: {
+                type: Array,
+                default: function () {
+                    return ["这道题是空的"];
+                }
+            },
+
+        },
+        data: function () {
+            let _this = this;
+            let values = [];
+            //将value追加, 循环拿到name为,给每个组件的name和下标组合起来,这样就不会出现相同的name了
+            this.choices.forEach((item, index) => {
+                values.push(_this.name + (index + ""));
+            });
+            return {
+                //将上面的values付给外面的values
+                values: values,
+                culValue: ""
+            }
+        },
+        template: `
+            <div class="panel panel-success">
+                <div class="panel-heading"><p>{{title}}</p></div>
+                <div class="panel-body">
+                    <div class="container">
+                        <div class="row">
+                            <div v-for="(item,index) in choices" class="col-xs-1">
+                                <input v-model="culValue" :value="item" type="radio" :id="values[index]" :name="name">
+                                <label :for="values[index]">{{item}}</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         `,
@@ -113,7 +197,7 @@
             let _this = this;
             let values = [];
             this.choices.forEach((item, index) => {
-                values.push(_this.name + (index + ''));
+                values.push(_this.name + (index + ""));
             });
             return {
                 values: values,
@@ -210,32 +294,43 @@
         data: {
             questions: [
                 {
-                    name: 'gender',
-                    type: 'radio',
-                    title: '你的性别?',
-                    choices: ["男", "女", "保密"]
+                    "name": "gender",
+                    "type": "radio",
+                    "title": "你的性别?",
+                    "choices": ["男", "女", "保密"],
+                    "isShow": true
                 },
                 {
 
-                    type: "multi",
-                    title: '你的爱好',
-                    choices: ["唱歌", "跳舞", "rap", "篮球"],
-                    picked: []
+                    "type": "multi",
+                    "title": "你的爱好",
+                    "choices": ["唱歌", "跳舞", "rap", "篮球"],
+                    "isShow": true,
+                    "picked": []
                 },
                 {
-                    type: 'typetext',
-                    title: '自我介绍',
-                    text: ""
+                    "type": "typetext",
+                    "title": "自我介绍",
+                    "isShow": true,
+                    "text": ""
                 },
                 {
-                    type: 'typeNumber',
-                    title: '年龄',
-                    num: ""
-                }
+                    "type": "typeNumber",
+                    "title": "年龄",
+                    "isShow": true,
+                    "num": ""
+                },
+                {
+
+                    "type": "score",
+                    "title": "你的爱好",
+                    "choices": ["唱歌", "跳舞", "rap", "篮球"],
+                    "isShow": true,
+                    "picked": []
+                },
 
             ]
         },
-        computed: {},
         methods: {
             handlePick: function (val) {
                 //通过页数拿到问题

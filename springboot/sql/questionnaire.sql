@@ -9,7 +9,7 @@ info varchar(128) not null,
 uid INT unsigned,
 authority INT unsigned,
 itemType INT unsigned,
-itemInfo varchar(1024),
+itemInfo varchar(8096),
 primary key (qid)
 )engine=InnoDB Default charset = utf8mb4;
 
@@ -22,7 +22,7 @@ BEGIN
         INSERT INTO questionNaire 
         (title,info,uid,authority,itemType,itemInfo) 
         VALUES
-        (concat('title',i),'info',3,i%3,i%7,'item_info');
+        (concat('title',i+60),'info',3,i%3,i%7,'item_info');
         SET i = i+1;
     END WHILE;
 END $

@@ -10,7 +10,7 @@
     <style type="text/css">
         div#app {
             margin: 20px auto;
-            width: 400px;
+            width: 800px;
             padding: 20px;
         }
     </style>
@@ -19,6 +19,36 @@
 
 <body>
 <div id="app">
+
+    <div v-for="(item, index) in questions" :key="index">
+        <radio-select :name="item.name"
+                      @pick="handlePick"
+                      :title="item.title" :choices="item.choices"
+                      v-show="item.isShow"
+                      v-if="item.type==='radio'
+            ">
+        </radio-select>
+        <multi-select @pick="handlePick"
+                      :title="item.title"
+                      :choices="item.choices"
+                      v-show="item.isShow"
+                      v-if="item.type==='multi'"></multi-select>
+        <typetext @pick="handlePick"
+                  :title="item.title"
+                  v-show="item.isShow"
+                  v-if="item.type==='typetext'"></typetext>
+        <type-number @pick="handlePick"
+                     :title="item.title"
+                     v-show="item.isShow"
+                     v-if="item.type==='typeNumber'"></type-number>
+        <score @pick="handlePick"
+               :title="item.title"
+               :choices="item.choices"
+               v-show="item.isShow"
+               v-if="item.type==='score'"></score>
+    </div>
+
+
     <div id="div4Update">
 
         <div class="input-group input-group">
@@ -35,7 +65,7 @@
         </div>
         <div class="input-group input-group">
             <label>
-                <input type="number" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
+                <input type="hidden" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
                        v-model="questionNaires4add.uid"/>
             </label>
         </div>
@@ -47,7 +77,7 @@
         </div>
         <div class="input-group input-group">
             <label>
-                <input type="number" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
+                <input type="hidden" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
                        v-model="questionNaires4add.itemType"/>
             </label>
         </div>
@@ -66,6 +96,233 @@
 </div>
 
 <script type="text/javascript">
+    Vue.component("radioSelect", {
+        //组件里的属性
+        props: {
+            //限制只能为String,默认值为gender
+            name: {
+                type: String,
+                default: "gender"
+            },
+            //限制只能为String,默认值为"这是一个单选"
+            title: {
+                type: String,
+                default: "这是一个单选"
+            },
+            //限制只能为数组,默认值为["这道题是空的"]
+            choices: {
+                type: Array,
+                default: function () {
+                    return ["这道题是空的"];
+                }
+            },
+
+        },
+        data: function () {
+            let _this = this;
+            let values = [];
+            //将value追加, 循环拿到name为,给每个组件的name和下标组合起来,这样就不会出现相同的name了
+            this.choices.forEach((item, index) => {
+                values.push(_this.name + (index + ''));
+            });
+            return {
+                //将上面的values付给外面的values
+                values: values,
+                culValue: ""
+            }
+        },
+        template: `
+            <div class="panel panel-success">
+                <div class="panel-heading"><p>{{title}}</p></div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <li v-for="(item,index) in choices" class="list-group-item">
+                            <input v-model="culValue" :value="item" type="radio" :id="values[index]" :name="name">
+                            <label :for="values[index]">{{item}}</label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        `,
+        watch: {
+            culValue: function (val) {
+                this.$emit("pick", val)
+            }
+        },
+    })
+
+    Vue.component("score", {
+        //组件里的属性
+        props: {
+            //限制只能为String,默认值为gender
+            name: {
+                type: String,
+                default: "gender"
+            },
+            //限制只能为String,默认值为"这是一个单选"
+            title: {
+                type: String,
+                default: "这是一个单选"
+            },
+            //限制只能为数组,默认值为["这道题是空的"]
+            choices: {
+                type: Array,
+                default: function () {
+                    return ["这道题是空的"];
+                }
+            },
+
+        },
+        data: function () {
+            let _this = this;
+            let values = [];
+            //将value追加, 循环拿到name为,给每个组件的name和下标组合起来,这样就不会出现相同的name了
+            this.choices.forEach((item, index) => {
+                values.push(_this.name + (index + ''));
+            });
+            return {
+                //将上面的values付给外面的values
+                values: values,
+                culValue: ""
+            }
+        },
+        template: `
+            <div class="panel panel-success">
+                <div class="panel-heading"><p>{{title}}</p></div>
+                <div class="panel-body">
+                    <div class="container">
+                        <div class="row">
+                            <div v-for="(item,index) in choices" class="col-xs-1">
+                                <input v-model="culValue" :value="item" type="radio" :id="values[index]" :name="name">
+                                <label :for="values[index]">{{item}}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `,
+        watch: {
+            culValue: function (val) {
+                this.$emit("pick", val)
+            }
+        },
+    })
+
+    Vue.component("multiSelect", {
+        props: {
+            name: {
+                type: String,
+                default: "cks"
+            },
+            title: {
+                type: String,
+                default: "这是一个多选"
+            },
+            choices: {
+                type: Array,
+                default: function () {
+                    return ["这道题是空的"];
+                }
+            }
+
+        },
+        data: function () {
+            let _this = this;
+            let values = [];
+            this.choices.forEach((item, index) => {
+                values.push(_this.name + (index + ''));
+            });
+            return {
+                values: values,
+                culValue: []
+            }
+        },
+        template: `
+            <div class="panel panel-success">
+                <div class="panel-heading"><p>{{title}}</p></div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <li v-for="(item,index) in choices" class="list-group-item">
+                            <input v-model="culValue" :value="item" type="checkbox" :id="values[index]" :name="name">
+                            <label :for="values[index]">{{item}}</label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        `,
+        watch: {
+            culValue: function (val) {
+                this.$emit("pick", val)
+            }
+        },
+    })
+
+    Vue.component("typetext", {
+        props: {
+            name: {
+                type: String,
+                default: "text"
+            },
+            title: {
+                type: String,
+                default: "这是一个文本"
+            },
+        },
+        data: function () {
+            return {
+                text: ""
+            }
+        },
+        watch: {
+            text: function (val) {
+                this.$emit("pick", val)
+            }
+        }
+        ,
+        template: `
+            <div class="panel panel-success">
+                <div class="panel-heading"><p>{{title}}</p></div>
+                <div class="panel-body">
+                    <textarea v-model="text" cols="30" rows="10" class="form-control"></textarea>
+                </div>
+            </div>
+        `
+    })
+
+    Vue.component("typeNumber", {
+        props: {
+            name: {
+                type: String,
+                default: "text"
+            },
+            title: {
+                type: String,
+                default: "这是一个数字输入框"
+            },
+        },
+        data: function () {
+            return {
+                num: ""
+            }
+        },
+        watch: {
+            num: function (val) {
+                this.$emit("pick", val)
+            }
+        }
+        ,
+        template: `
+            <div class="panel panel-success">
+                <div class="panel-heading"><p>{{title}}</p></div>
+                <div class="panel-body">
+                    <input type="number" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
+                           v-model="num"/>
+                </div>
+            </div>
+        `
+    })
+
+
     //获取地址栏参数的函数
     function getUrlParms(name) {
         let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
@@ -78,6 +335,10 @@
     let data4Vue = {
         questionNaires: [],
         questionNaires4add: {qid: 0, title: '', info: '', uid: 0, authority: 0, itemType: 0, itemInfo: ''},
+        questions: [
+
+
+        ]
     };
 
     //ViewModel
@@ -86,6 +347,7 @@
         data: data4Vue,
         mounted: function () { //mounted　表示这个 Vue 对象加载成功了
             this.get();
+
         },
         methods: {
             get: function () {
@@ -94,6 +356,9 @@
                 console.log(url);
                 axios.get(url).then(function (response) {
                     vue.questionNaires4add = response.data;
+                    console.log(vue.questionNaires4add.itemInfo)
+                    vue.questions = JSON.parse(vue.questionNaires4add.itemInfo);
+                    console.log(vue.questions)
                 })
             },
             update: function () {
@@ -104,7 +369,32 @@
             },
             cancel: function () {
                 location.href = "listQuestionNaire";
-            }
+            },
+
+            handlePick: function (val) {
+                //通过页数拿到问题
+                // let question = this.questions[this.page];
+                // switch (question.type) {
+                //     case "radio":
+                //         if (val) {
+                //             this.questions[this.page].picked = val;
+                //             return;
+                //         }
+                //         break;
+                //     case "multi":
+                //         if (val.length >= 3) {
+                //             question.pickeds = val;
+                //             return;
+                //         }
+                //         break;
+                //     case "typetext":
+                //         if (val.length >= 10) {
+                //             question.text = val;
+                //             return;
+                //         }
+                //         break;
+                // }
+            },
         }
     });
 </script>

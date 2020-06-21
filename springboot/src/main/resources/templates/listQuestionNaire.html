@@ -54,19 +54,16 @@
         <tr>
             <td>title</td>
             <td>info</td>
-<!--            <td>uid</td>-->
             <td>authority</td>
-            <td>itemType</td>
             <td>itemInfo</td>
+            <td>operation</td>
         </tr>
 
 
         <tr v-for="questionNaire in QuestionNaires ">
             <td>{{questionNaire.title}}</td>
             <td>{{questionNaire.info}}</td>
-<!--            <td>{{questionNaire.uid}}</td>-->
             <td>{{questionNaire.authority}}</td>
-            <td>{{questionNaire.itemType}}</td>
             <td>{{questionNaire.itemInfo}}</td>
             <td>
                 <a :href="'editQuestionNaire?qid=' + questionNaire.qid ">
