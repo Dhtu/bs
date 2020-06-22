@@ -69,6 +69,9 @@
                 <a :href="'editQuestionNaire?qid=' + questionNaire.qid ">
                     <button type="button" class="btn btn-info">编辑</button>
                 </a>
+                <a :href="'editTableData?did=1'">
+                    <button type="button" class="btn btn-success">获取链接</button>
+                </a>
                 <a href="#nowhere" @click="deleteQuestionNaire(questionNaire.qid)">
                     <button type="button" class="btn btn-danger">删除</button>
                 </a>

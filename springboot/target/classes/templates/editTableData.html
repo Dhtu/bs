@@ -13,6 +13,12 @@
             width: 800px;
             padding: 20px;
         }
+
+        button.center {
+            margin: 20px auto;
+            width: 800px;
+            padding: 20px;
+        }
     </style>
     <title>填写问卷</title>
 </head>
@@ -20,11 +26,16 @@
 <body>
 <div id="app">
 
+
     <div v-for="(item, index) in questions" :key="index">
+        <div class="page-header" v-if="item.type==='title'">
+            <h1>{{item.title}}<small>{{item.des}}</small></h1>
+        </div>
         <radio-select :name="item.name"
                       @pick="handlePick"
                       :title="item.title" :choices="item.choices"
                       :index="index"
+                      :link="item.link"
                       v-show="item.isShow"
                       v-if="item.type==='radio'
             ">
@@ -51,10 +62,10 @@
                :index="index"
                v-show="item.isShow"
                v-if="item.type==='score'"></score>
-        <div class="panel panel-success">
+        <div class="panel panel-success" v-if="item.type==='locate'">
             <div class="panel-heading"><p>get location</p></div>
             <div class="panel-body">
-                <button type="button" class="btn btn-lg btn-block" v-on:click="locate" v-if="item.type==='locate'">
+                <button type="button" class="btn btn-lg btn-block" v-on:click="locate">
                     点击获取地理位置
                 </button>
             </div>
@@ -85,10 +96,10 @@
         </div>
         <input type="hidden" v-model="tableDatas4add.did"/>
         <br>
-        <div class="panel-body">
-            <button type="button" class="btn  btn-lg btn-info" v-on:click="add">提交</button>
-            <button type="button" class="btn  btn-lg btn-danger" v-on:click="cancel">取消</button>
-        </div>
+
+        <button type="button" class="btn  btn-lg btn-info center" v-on:click="add">提交</button>
+        <button type="button" class="btn  btn-lg btn-danger center" v-on:click="cancel">取消</button>
+
     </div>
 </div>
 
@@ -119,7 +130,9 @@
             index: {
                 type: Number,
                 default: 0
-            }
+            },
+
+            link: {type: Object, default: null}
 
         },
         data: function () {
@@ -133,7 +146,8 @@
                 //将上面的values付给外面的values
                 values: values,
                 culValue: "",
-                index: this.index
+                index: this.index,
+                link: this.link
             }
         },
         template: `
@@ -154,6 +168,7 @@
                 let ret = {}
                 ret.val = val
                 ret.index = this.index
+                ret.link = this.link[val]
                 this.$emit("pick", ret)
             }
         },
@@ -316,7 +331,6 @@
         `
     })
 
-
     Vue.component("typeNumber", {
         props: {
             name: {
@@ -399,10 +413,14 @@
             },
             add: function () {
                 let url = "TableDatas";
-                axios.post(url, vue.tableDatas4add).then(function () {
-                    // vue.list(1);
-                    // vue.TableDatas4add = {did: 0,  qid: 0, uid: 0, value: ''}
-                    location.href = "listTableData";
+                axios.post(url, vue.tableDatas4add).then(function (response) {
+                    if (response.data==="false1"){
+                        alert("只有登录用户可以填写")
+                    }
+                    else{
+                        location.href = "listTableData";
+                    }
+
                 });
             },
             update: function () {
@@ -417,6 +435,11 @@
             handlePick: function (val) {
                 val.question = this.questions[val.index]
                 vue.answers[val.index] = val
+                if (val.link !== null) {
+                    for (let linkElement in val.link) {
+                        vue.questions[linkElement].isShow = true
+                    }
+                }
                 vue.tableDatas4add.value = JSON.stringify(vue.answers)
             },
             locate: function () {

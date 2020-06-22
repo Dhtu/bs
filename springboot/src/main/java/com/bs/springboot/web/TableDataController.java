@@ -1,6 +1,8 @@
 package com.bs.springboot.web;
 
+import com.bs.springboot.pojo.QuestionNaire;
 import com.bs.springboot.pojo.TableData;
+import com.bs.springboot.service.QuestionNaireService;
 import com.bs.springboot.service.TableDataService;
 import com.bs.springboot.service.serviceHelper.SessionHelper;
 import com.github.pagehelper.PageHelper;
@@ -16,8 +18,11 @@ public class TableDataController {
     final
     TableDataService tableDataService;
 
-    public TableDataController(TableDataService tableDataService) {
+    QuestionNaireService questionNaireService;
+
+    public TableDataController(TableDataService tableDataService,QuestionNaireService questionNaireService) {
         this.tableDataService = tableDataService;
+        this.questionNaireService = questionNaireService;
     }
 
     /*restful 部分*/
@@ -45,7 +50,7 @@ public class TableDataController {
         List<TableData> hs = null;
         if (uid >= 0) {
             PageHelper.startPage(start, size);
-            hs = tableDataService.listSelectedQid(uid,qid);
+            hs = tableDataService.listSelectedQid(uid, qid);
             System.out.println(hs.size());
         }
         return new PageInfo<>(hs, 20);
@@ -63,6 +68,11 @@ public class TableDataController {
     public String add(@RequestBody TableData h,
                       HttpSession session) {
         int uid = SessionHelper.GetUid(session);
+        QuestionNaire questionNaire = questionNaireService.get(h.getQid());
+        System.out.println(questionNaire);
+        if (uid < 0 && questionNaire.getAuthority() == 1) {
+            return "false1";
+        }
 //        h.setUid(uid);
         System.out.println(h);
         tableDataService.add(h);
