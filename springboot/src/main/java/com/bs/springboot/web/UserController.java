@@ -40,6 +40,16 @@ public class UserController {
 
     @PostMapping("/Users")
     public String add(@RequestBody User h) {
+        List<User> hs = userService.list();
+        for (User user :
+                hs) {
+            if (user.getUname().equals(h.getUname())) {
+                return "unameFalse";
+            }
+            if (user.getEmail().equals(h.getEmail())){
+                return "emailFalse";
+            }
+        }
         userService.add(h);
         return "success";
     }

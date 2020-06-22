@@ -11,25 +11,39 @@
     <script src="./js/bootstrap.min.js"></script>
     <style type="text/css">
         body {
-            display:flex;
+            display: flex;
             height: 969px;
             align-items: center;
-            padding:40px 0;
+            padding: 40px 0;
             background-color: #f5f5f5;
+            background-image: url("./images/background.png");
         }
+
+        div#app {
+            position: absolute;
+            right: 200px;
+            top: 250px;
+            background-color: rgba(246, 245, 245, 0.5);
+            margin: 20px auto;
+            /*width: 400px;*/
+            padding: 20px;
+        }
+
         form {
             display: block;
             width: 100%;
             max-width: 330px;
-            padding:15px;
+            padding: 15px;
             margin: auto;
         }
+
         .btn-block {
-            width:300px;
-            margin:10px auto;
+            width: 300px;
+            margin: 10px auto;
         }
+
         .form-control {
-            width:300px;
+            width: 300px;
             height: 50px;
             font-size: 20px;
             /*margin:0 auto -20px;*/
@@ -38,34 +52,37 @@
 
 
     </style>
+
 </head>
 <body class=text-center>
-<form id = "app" >
-    <h2 class="=form-signin0-heading">Please sign in</h2>
-    <label>
-        <input class="form-control" v-model="user4Login.uname" type="number" placeholder="用户名" >
-    </label><br>
-    <label>
-        <input class="form-control" v-model="user4Login.password" type="password" placeholder="密码">
-    </label><br>
-    <label>
-        <input class="form-control" v-model="passwordCheck" type="password" placeholder="请再次输入密码">
-    </label><br>
-    <label>
-        <input class="form-control" v-model="user4Login.email" type="number" placeholder="用户邮箱" >
-    </label><br>
-    <button class="btn btn-lg btn-primary btn-block" type="button" @click="login" >Sign in</button>
-</form>
+<div id="app">
+    <form>
+        <h2 class="=form-signin0-heading">Please sign up</h2>
+        <label>
+            <input class="form-control" v-model="user4Add.uname" type="text" placeholder="用户名">
+        </label><br>
+        <label>
+            <input class="form-control" v-model="user4Add.password" type="password" placeholder="密码">
+        </label><br>
+        <label>
+            <input class="form-control" v-model="password4Check" type="password" placeholder="请再次输入密码">
+        </label><br>
+        <label>
+            <input class="form-control" v-model="user4Add.email" type="text" placeholder="用户邮箱">
+        </label><br>
+        <button class="btn btn-lg btn-primary btn-block" type="button" @click="add">Sign up</button>
+    </form>
+</div>
 <script>
-    new Vue({
-        el:'#app',
-        data:{
-            user4Login: { uid: 0, uname: '', password: '',email: ''},
-            passwordCheck: ''
+    let vue = new Vue({
+        el: '#app',
+        data: {
+            user4Add: {uid: 0, uname: '', password: '', email: ''},
+            password4Check: ''
         },
-        methods:{
-            login:function () {
-                axios.post('/selectUserName', this.user4Login).then(function (dat) {
+        methods: {
+            login: function () {
+                axios.post('/selectUserName', this.user4Add).then(function (dat) {
                     console.log(dat.data)
                     if (dat.data === 0)
                         console.log("用户不存在")
@@ -76,6 +93,44 @@
                 }).catch(function () {
                     console.log("传输失败")
                 })
+            },
+
+            add: function () {
+                const url = "Users";
+                if (vue.user4Add.password.length < 6) {
+                    alert("密码不够长")
+                    return false;
+                }
+
+                if (vue.user4Add.uname.length < 6) {
+                    alert("用户名不够长")
+                    return false;
+                }
+
+                if (vue.user4Add.password !== vue.password4Check) {
+                    alert("两次密码输入不一致")
+                    return false;
+                }
+
+                let reg = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+                //调用正则验证test()函数
+                let isok = reg.test(vue.user4Add.email);
+                if (!isok) {
+                    alert("邮箱格式不正确，请重新输入！");
+                    return false;
+                }
+
+                axios.post(url, this.user4Add).then(function (response) {
+                    if (response.data==="unameFalse"){
+                        alert("用户名重复")
+                    }else if (response.data==="emailFalse"){
+                        alert("邮箱已注册")
+                    }
+                    else {
+                        location.href = "index";
+                    }
+
+                });
             },
         }
     })
