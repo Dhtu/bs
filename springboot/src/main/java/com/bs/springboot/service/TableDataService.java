@@ -5,13 +5,17 @@ import com.bs.springboot.pojo.TableData;
 import java.util.List;
 
 public interface TableDataService {
-    public int add(TableData tableData);
+    int add(TableData tableData);
 
-    public void delete(int did);
+    void delete(int did);
 
-    public TableData get(int did);
+    TableData get(int did);
 
-    public int update(TableData tableData);
+    int update(TableData tableData);
 
-    public List<TableData> list();
+    List<TableData> list();
+
+    List<TableData> listSelected(int uid);
+
+    List<TableData> listSelectedQid(int uid, int qid);
 }

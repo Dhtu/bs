@@ -32,4 +32,15 @@
         select *
         from tabledata
     </select>
+    <select id="SelectedList" parameterType="_int" resultType="TableData">
+        select *
+        from tabledata
+        where uid = #{uid}
+    </select>
+    <select id="SelectedListQid" parameterType="TableData" resultType="TableData">
+        select *
+        from tabledata
+        where uid = #{uid}
+          and qid = #{qid}
+    </select>
 </mapper>

@@ -24,6 +24,7 @@
         <radio-select :name="item.name"
                       @pick="handlePick"
                       :title="item.title" :choices="item.choices"
+                      :index="index"
                       v-show="item.isShow"
                       v-if="item.type==='radio'
             ">
@@ -31,6 +32,7 @@
         <multi-select @pick="handlePick"
                       :title="item.title"
                       :choices="item.choices"
+                      :index="index"
                       v-show="item.isShow"
                       v-if="item.type==='multi'"></multi-select>
         <typetext @pick="handlePick"
@@ -40,11 +42,13 @@
                   v-if="item.type==='typetext'"></typetext>
         <type-number @pick="handlePick"
                      :title="item.title"
+                     :index="index"
                      v-show="item.isShow"
                      v-if="item.type==='typeNumber'"></type-number>
         <score @pick="handlePick"
                :title="item.title"
                :choices="item.choices"
+               :index="index"
                v-show="item.isShow"
                v-if="item.type==='score'"></score>
     </div>
@@ -73,7 +77,7 @@
 
         <input type="hidden" v-model="tableDatas4add.did"/>
         <br>
-        <button type="button" class="btn btn-info" v-on:click="update">修改</button>
+        <button type="button" class="btn btn-info" v-on:click="add">提交</button>
         <button type="button" class="btn btn-danger" v-on:click="cancel">取消</button>
 
     </div>
@@ -103,6 +107,11 @@
                 }
             },
 
+            index: {
+                type: Number,
+                default: 0
+            }
+
         },
         data: function () {
             let _this = this;
@@ -114,7 +123,8 @@
             return {
                 //将上面的values付给外面的values
                 values: values,
-                culValue: ""
+                culValue: "",
+                index: this.index
             }
         },
         template: `
@@ -132,7 +142,10 @@
         `,
         watch: {
             culValue: function (val) {
-                this.$emit("pick", val)
+                let ret = {}
+                ret.val = val
+                ret.index = this.index
+                this.$emit("pick", ret)
             }
         },
     })
@@ -157,6 +170,7 @@
                     return ["这道题是空的"];
                 }
             },
+            index: {type: Number, default: 0}
 
         },
         data: function () {
@@ -169,7 +183,8 @@
             return {
                 //将上面的values付给外面的values
                 values: values,
-                culValue: ""
+                culValue: "",
+                index: this.index
             }
         },
         template: `
@@ -189,7 +204,10 @@
         `,
         watch: {
             culValue: function (val) {
-                this.$emit("pick", val)
+                let ret = {}
+                ret.val = val
+                ret.index = this.index
+                this.$emit("pick", ret)
             }
         },
     })
@@ -209,7 +227,8 @@
                 default: function () {
                     return ["这道题是空的"];
                 }
-            }
+            },
+            index: {type: Number, default: 0}
 
         },
         data: function () {
@@ -220,7 +239,8 @@
             });
             return {
                 values: values,
-                culValue: []
+                culValue: [],
+                index: this.index
             }
         },
         template: `
@@ -238,7 +258,10 @@
         `,
         watch: {
             culValue: function (val) {
-                this.$emit("pick", val)
+                let ret = {}
+                ret.val = val
+                ret.index = this.index
+                this.$emit("pick", ret)
             }
         },
     })
@@ -294,15 +317,23 @@
                 type: String,
                 default: "这是一个数字输入框"
             },
+            index: {
+                type: Number,
+                default: 0
+            }
         },
         data: function () {
             return {
-                num: ""
+                num: "",
+                index: this.index
             }
         },
         watch: {
             num: function (val) {
-                this.$emit("pick", val)
+                let ret = {}
+                ret.val = val
+                ret.index = this.index
+                this.$emit("pick", ret)
             }
         }
         ,
@@ -357,6 +388,14 @@
                     vue.getQuestionNaire(vue.tableDatas4add.qid)
                 })
             },
+            add: function () {
+                let url = "TableDatas";
+                axios.post(url, vue.tableDatas4add).then(function () {
+                    // vue.list(1);
+                    // vue.TableDatas4add = {did: 0,  qid: 0, uid: 0, value: ''}
+                    location.href = "listTableData";
+                });
+            },
             update: function () {
                 let url = "TableDatas/" + vue.tableDatas4add.did;
                 axios.put(url, vue.tableDatas4add).then(function () {
@@ -367,28 +406,8 @@
                 location.href = "listTableData";
             },
             handlePick: function (val) {
-                let question = this.questions[val.index];
-                switch (question.type) {
-                    case "radio":
-                        if (val) {
-                            this.questions[this.page].picked = val;
-                            return;
-                        }
-                        break;
-                    case "multi":
-                        if (val.length >= 3) {
-                            question.pickeds = val;
-                            return;
-                        }
-                        break;
-                    case "typetext":
-                        console.log(val.index)
-                        console.log(val.val)
-                        val.question = question
-                        vue.answers[val.index] = val
-                        break;
-                }
-
+                val.question = this.questions[val.index]
+                vue.answers[val.index] = val
                 vue.tableDatas4add.value = JSON.stringify(vue.answers)
             }
         }

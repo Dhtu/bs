@@ -22,11 +22,32 @@ public class TableDataController {
 
     /*restful 部分*/
     @GetMapping("/TableDatas")
-    public PageInfo<TableData> list(@RequestParam(value = "start", defaultValue = "1") int start, @RequestParam(value = "size", defaultValue = "20") int size) {
-        PageHelper.startPage(start, size);
-        List<TableData> hs = tableDataService.list();
-        System.out.println(hs.size());
+    public PageInfo<TableData> list(@RequestParam(value = "start", defaultValue = "1") int start,
+                                    @RequestParam(value = "size", defaultValue = "20") int size,
+                                    HttpSession session) {
 
+        int uid = SessionHelper.GetUid(session);
+        List<TableData> hs = null;
+        if (uid >= 0) {
+            PageHelper.startPage(start, size);
+            hs = tableDataService.listSelected(uid);
+            System.out.println(hs.size());
+        }
+        return new PageInfo<>(hs, 20);
+    }
+
+    @GetMapping("/TableDatasQid/{qid}")
+    public PageInfo<TableData> listQid(@RequestParam(value = "start", defaultValue = "1") int start,
+                                       @RequestParam(value = "size", defaultValue = "20") int size,
+                                       HttpSession session, @PathVariable int qid) {
+
+        int uid = SessionHelper.GetUid(session);
+        List<TableData> hs = null;
+        if (uid >= 0) {
+            PageHelper.startPage(start, size);
+            hs = tableDataService.listSelectedQid(uid,qid);
+            System.out.println(hs.size());
+        }
         return new PageInfo<>(hs, 20);
     }
 
@@ -42,7 +63,8 @@ public class TableDataController {
     public String add(@RequestBody TableData h,
                       HttpSession session) {
         int uid = SessionHelper.GetUid(session);
-        h.setUid(uid);
+//        h.setUid(uid);
+        System.out.println(h);
         tableDataService.add(h);
         return "success";
     }
@@ -63,6 +85,11 @@ public class TableDataController {
     @RequestMapping(value = "/listTableData", method = RequestMethod.GET)
     public ModelAndView listTableData() {
         return new ModelAndView("listTableData");
+    }
+
+    @RequestMapping(value = "/showTableData", method = RequestMethod.GET)
+    public ModelAndView showTableData() {
+        return new ModelAndView("showTableData");
     }
 
     @RequestMapping(value = "/editTableData", method = RequestMethod.GET)

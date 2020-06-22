@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="cn">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <script src="./js/vue.min.js"></script>
@@ -38,12 +38,13 @@
     </style>
     <script>
         $(function () {
-            $("a.disableHref").click(function (event) {
+            $("a.disableHref").click(function () {
                 return false;
 
             });
         });
     </script>
+    <title>展示表格填写结果</title>
 </head>
 
 <body>
@@ -55,6 +56,7 @@
             <td>qid</td>
             <td>uid</td>
             <td>value</td>
+            <td>Operation</td>
         </tr>
 
 
@@ -141,7 +143,7 @@
         },
         methods: {
             list: function (start) {
-                var url = "TableDatas?start=" + start;
+                var url = "TableDatasQid/1?start=" + start;
                 axios.get(url).then(function (response) {
                     vue.pagination = response.data;
                     console.log(vue.pagination);

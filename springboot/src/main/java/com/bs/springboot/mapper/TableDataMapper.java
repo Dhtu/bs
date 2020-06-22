@@ -6,13 +6,17 @@ import java.util.List;
 
 @Mapper
 public interface TableDataMapper {
-    public int add(TableData tableData);
+    int add(TableData tableData);
 
-    public void delete(int did);
+    void delete(int did);
 
-    public TableData get(int did);
+    TableData get(int did);
 
-    public int update(TableData tableData);
+    int update(TableData tableData);
 
-    public List<TableData> list();
+    List<TableData> list();
+
+    List<TableData> SelectedList(int uid);
+
+    List<TableData> SelectedListQid(TableData tableData);
 }

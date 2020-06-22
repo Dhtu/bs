@@ -5,6 +5,7 @@ import com.bs.springboot.pojo.TableData;
 import com.bs.springboot.service.TableDataService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -40,5 +41,19 @@ public class TableDataImpl implements TableDataService {
     public List<TableData> list() {
         return tableDataMapper.list();
     }
+
+    @Override
+    public List<TableData> listSelected(int uid) {
+        return tableDataMapper.SelectedList(uid);
+    }
+
+    @Override
+    public List<TableData> listSelectedQid(int uid, int qid) {
+        TableData td = new TableData();
+        td.setUid(uid);
+        td.setQid(qid);
+        return tableDataMapper.SelectedListQid(td);
+    }
+
 
 }
