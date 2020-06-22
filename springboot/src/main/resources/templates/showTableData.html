@@ -4,6 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <script src="./js/vue.min.js"></script>
     <script src="./js/axios.min.js"></script>
+    <script src="./js/chart.min.js"></script>
     <script src="./js/jquery.min.js"></script>
     <link href="./css/bootstrap.min.css" rel="stylesheet">
     <script src="./js/bootstrap.min.js"></script>
@@ -29,29 +30,23 @@
             margin: 0 auto;
             text-align: center; /* For text alignment to center horizontally. */
         }
-
-        .disableHref {
-            cursor: default;
-            color: #E5E0E0;
-            text-decoration: none;
-        }
     </style>
-    <script>
-        $(function () {
-            $("a.disableHref").click(function () {
-                return false;
+    <!--    <script>-->
+    <!--        $(function () {-->
+    <!--            $("a.disableHref").click(function () {-->
+    <!--                return false;-->
 
-            });
-        });
-    </script>
+    <!--            });-->
+    <!--        });-->
+    <!--    </script>-->
     <title>展示表格填写结果</title>
 </head>
 
 <body>
+
+
 <div id="app">
     <table id="ListTable" class="table table-striped table-bordered table-hover  table-condensed">
-
-
         <tr>
             <td>qid</td>
             <td>uid</td>
@@ -59,6 +54,12 @@
             <td>Operation</td>
         </tr>
 
+        <tr>
+            <td>人数统计</td>
+            <td>{{TableDatas.length}}</td>
+            <td>发起日期</td>
+            <td>2020/6/22</td>
+        </tr>
 
         <tr v-for="TableData in TableDatas ">
             <td>{{TableData.qid}}</td>
@@ -75,32 +76,7 @@
         </tr>
 
 
-
-        <tr class="hidden">
-            <td colspan="4">
-
-                <div class="input-group input-group">
-                    <input type="number" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
-                           v-model="TableDatas4add.qid"/>
-                </div>
-                <div class="input-group input-group">
-                    <input type="number" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
-                           v-model="TableDatas4add.uid"/>
-                </div>
-                <div class="input-group input-group">
-                    <input type="text" class="form-control" placeholder="itemInfo" aria-describedby="basic-addon1"
-                           v-model="TableDatas4add.value"/>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-primary" v-on:click="add">新增表格数据</button>
-                </div>
-                <div style="height: 80px">
-
-                </div>
-            </td>
-        </tr>
     </table>
-
     <nav class="navbar navbar-default navbar-fixed-bottom">
         <div id="outer" style="width:100%;">
             <div id="inner">
@@ -111,7 +87,7 @@
                         <a :class="{ disableHref: !pagination.hasPreviousPage }" href="#nowhere"
                            @click="jump('pre')"><span aria-hidden="true">&laquo;</span></a>
                     </li>
-                    <li><a href="#nowhere" :class="{disableHref:pagination.pageNum==i}"
+                    <li><a href="#nowhere" :class="{disableHref:pagination.pageNum===i}"
                            v-for="i in pagination.navigatepageNums" @click="jumpByNumber(i)">
                         {{i}}</a>
                     </li>
@@ -128,39 +104,59 @@
 </div>
 
 <script type="text/javascript">
-    var data4Vue = {
+
+
+    function getUrlParms(name) {
+        let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        let r = window.location.search.substr(1).match(reg);
+        if (r != null)
+            return unescape(r[2]);
+        return null;
+    }
+
+    const data4Vue = {
         TableDatas: [],
-        TableDatas4add: {did: 0,  qid: 0, uid: 0, value: ''},
-        pagination: {}
+        TableDatas4add: {did: 0, qid: 0, uid: 0, value: ''},
+        pagination: {pageNum: 0, hasPreviousPage: 0, prePage: 0, hasNextPage: 0, nextPage: 0, navigatepageNums: 0},
+        questions: {}
     };
 
     //ViewModel
-    var vue = new Vue({
+    const vue = new Vue({
         el: '#app',
         data: data4Vue,
         mounted: function () { //mounted　表示这个 Vue 对象加载成功了
             this.list(1);
+            this.getQuestionNaire();
         },
         methods: {
+            getQuestionNaire: function () {
+                let qid = getUrlParms("qid");
+                let url = "QuestionNaires/" + qid;
+                console.log(url);
+                axios.get(url).then(function (response) {
+                    let itemInfo = response.data.itemInfo;
+                    vue.questions = JSON.parse(itemInfo);
+                })
+            },
             list: function (start) {
-                var url = "TableDatasQid/1?start=" + start;
+                const url = "TableDatasQid/1?start=" + start;
                 axios.get(url).then(function (response) {
                     vue.pagination = response.data;
-                    console.log(vue.pagination);
                     vue.TableDatas = response.data.list;
                 })
             },
-            add: function (event) {
-                var url = "TableDatas";
+            add: function () {
+                const url = "TableDatas";
 
-                axios.post(url, this.TableDatas4add).then(function (response) {
+                axios.post(url, this.TableDatas4add).then(function () {
                     vue.list(1);
-                    vue.TableDatas4add = {did: 0,  qid: 0, uid: 0, value: ''}
+                    vue.TableDatas4add = {did: 0, qid: 0, uid: 0, value: ''}
                 });
             },
             deleteTableData: function (id) {
-                var url = "TableDatas/" + id;
-                axios.delete(url).then(function (response) {
+                const url = "TableDatas/" + id;
+                axios.delete(url).then(function () {
                     vue.list(1);
                 });
             },
@@ -182,6 +178,8 @@
             jumpByNumber: function (start) {
                 if (start !== vue.pagination.pageNum)
                     vue.list(start);
+            },
+            handlePick: function (val) {
             }
         }
     });

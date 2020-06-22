@@ -10,7 +10,7 @@ email varchar(40) unique not null,
 primary key (uid)
 )engine=InnoDB Default charset = utf8mb4;
 
-DROP PROCEDURE IF EXISTS pro_initData;--如果存在此存储过程则删掉
+DROP PROCEDURE IF EXISTS pro_initData;/*如果存在此存储过程则删掉*/
 DELIMITER $
 CREATE PROCEDURE pro_initData()
 BEGIN

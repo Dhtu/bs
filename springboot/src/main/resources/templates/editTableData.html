@@ -382,7 +382,6 @@
             get: function () {
                 let did = getUrlParms("did");
                 let url = "TableDatas/" + did;
-                console.log(url);
                 axios.get(url).then(function (response) {
                     vue.tableDatas4add = response.data;
                     vue.getQuestionNaire(vue.tableDatas4add.qid)

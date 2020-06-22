@@ -15,6 +15,11 @@ public class IndexController {
         return new ModelAndView("login");
     }
 
+    @RequestMapping(value = "/signUp", method = RequestMethod.GET)
+    public ModelAndView signUp() {
+        return new ModelAndView("signUp");
+    }
+
     @RequestMapping(value = "/testHTML", method = RequestMethod.GET)
     public ModelAndView testHTML() {
         return new ModelAndView("testHTML");
